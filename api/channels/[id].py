@@ -1,5 +1,6 @@
 import os
 from http.server import BaseHTTPRequestHandler
+from urllib import parse
 from telethon.sync import TelegramClient
 from telethon.sessions import StringSession
 from dotenv import load_dotenv
