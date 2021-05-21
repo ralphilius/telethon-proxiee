@@ -37,6 +37,7 @@ class handler(BaseHTTPRequestHandler):
             dic = dict(parse.parse_qsl(parse.urlsplit(s).query));
             if "id" in dic:
                 message = "Hello, " + dic["id"] + "!"
+                channel_username = dic["id"]
                 for msg in client.get_messages(channel_username, limit=10):
                     print(msg.message)
                     messages.append(msg.message)
