@@ -7,13 +7,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-try:
-    client = TelegramClient(StringSession(os.getenv("STRING_TOKEN")), os.getenv("API_ID"), os.getenv("API_HASH"))
-    client.start()
-except Exception as e:
-    print(f"Exception while starting the client - {e}")
-else:
-    print("Client started")
+
 
 # async def main():
 #     try:
@@ -32,13 +26,27 @@ class handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         s = self.path
-        dic = dict(parse.parse_qsl(parse.urlsplit(s).query))
+        
         self.send_response(200)
         self.send_header('Content-type','text/plain')
         self.end_headers()
-        if "name" in dic:
-            message = "Hello, " + dic["id"] + "!"
+        try:
+            client = TelegramClient(StringSession(os.getenv("STRING_TOKEN")), os.getenv("API_ID"), os.getenv("API_HASH"))
+            client.start()
+            messages = []
+            dic = dict(parse.parse_qsl(parse.urlsplit(s).query));
+            if "id" in dic:
+                message = "Hello, " + dic["id"] + "!"
+                for msg in client.get_messages(channel_username, limit=10):
+                    print(msg.message)
+                    messages.append(msg.message)
+                message = messages
+            else:
+                message = "Hello, stranger!"
+            self.wfile.write(message.encode())
+        except Exception as e:
+            message = "Exception while starting the client"
+            print(f"Exception while starting the client - {e}")
         else:
-            message = "Hello, stranger!"
-        self.wfile.write(message.encode())
+            print("Client started")
         return
